@@ -44,7 +44,7 @@ func TestFoo(t *testing.T) {
 }
 
 func TestAllCounters(t *testing.T) {
-	cs, err := NewCounters(BuiltinCounters...)
+	cs, err := NewCounterGroup(BuiltinCounters...)
 	if err != nil {
 		t.Fatal(err)
 	}

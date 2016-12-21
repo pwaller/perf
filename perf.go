@@ -106,8 +106,8 @@ func (cs *CounterGroup) Reset() error {
 	return nil
 }
 
-// NewCounters constructs a new Counter group.
-func NewCounters(opts ...Option) (*CounterGroup, error) {
+// NewCounterGroup constructs a new Counter group.
+func NewCounterGroup(opts ...Option) (*CounterGroup, error) {
 	leader, err := NewCounter(opts[0])
 	if err != nil {
 		return nil, err
