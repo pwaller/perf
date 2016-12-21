@@ -2,7 +2,6 @@ package perf
 
 import (
 	"log"
-	"os"
 	"testing"
 	"time"
 )
@@ -78,61 +77,5 @@ func TestAllCounters(t *testing.T) {
 	log.Println("--")
 	for i, c := range cs.cs {
 		log.Println(c.Name, vs[i], ps[i])
-	}
-}
-
-func TestFooBar(t *testing.T) {
-	fd, err := os.Open("evs.tsv")
-	if err != nil {
-		t.Fatal(err)
-	}
-	opts, err := ReadRawCounter(fd)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Logf("len=%d", len(opts))
-
-	opts = append([]Option{Options(TaskClock, Pinned), ContextSwitches}, opts...)
-
-	counters := []*Counters{}
-	for i := 0; i < len(opts); i += 2 {
-		cs, err := NewCounters(opts[i : i+2]...)
-		if err != nil {
-			continue
-			log.Fatal(err)
-		}
-		counters = append(counters, cs)
-	}
-
-	// cs, err := NewCounters(opts[12:17]...)
-	// if err != nil {
-	// 	t.Fatal(err)
-	// }
-
-	Disable()
-	for _, cs := range counters {
-		cs.Reset()
-	}
-	Enable()
-
-	for i := 0; i < 10000000000; i++ {
-	}
-
-	Disable()
-
-	// deadline := time.Now().Add(100 * time.Millisecond)
-	// for time.Now().Before(deadline) {
-	// 	// Spin
-	// }
-
-	for j, cs := range counters {
-		vs, ps, err := cs.Read()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		for i, c := range cs.cs {
-			log.Printf("%4d %-70v %11d %5.02f", j, c.Name, int64(float64(vs[i])/ps[i]), ps[i]*100)
-		}
 	}
 }
