@@ -1,6 +1,6 @@
 # Linux Perf Bindings for Go
 
-If you'd like to measure the exact number of CPU cycles and misses of a specific piece of Go code, you've come to the right place!
+If you'd like to measure the (close to) exact number of CPU cycles and misses of a specific piece of Go code, you've come to the right place!
 
 Unfortunately, it is not possible for a program being profiled by perf to exclude all but a specific bit of code. The linux documentation seems to imply that this can be achieved with `prctl`, but there are mailing list posts indicating that this does not work.
 
