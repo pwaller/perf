@@ -55,19 +55,23 @@ type Counter struct {
 	enabled bool
 }
 
-// Counters represents a set of counters which may be read together.
+// CounterGroup represents a set of counters which may be read together.
 // All counters are paused simultaneously during a reading so that
 // comparisons between numbers measured in the same group
 // (for example, ratios) are meaningful.
-type Counters struct {
-	leader  *Counter
-	cs      []*Counter
+// Beware that the number of counters allowed in a group is implementation
+// defined. (In other words: it might depend on what CPU you have, read the
+// relevant CPU developer manual to find out.)
+type CounterGroup struct {
+	leader *Counter
+	cs     []*Counter
+
 	enabled bool
 }
 
 // Read all the counters.
 // The group leader is disabled first so that the counts are not disturbed.
-func (cs *Counters) Read() ([]uint64, []float64, error) {
+func (cs *CounterGroup) Read() ([]uint64, []float64, error) {
 	cs.leader.Disable()
 	defer cs.leader.Enable()
 
@@ -88,7 +92,7 @@ func (cs *Counters) Read() ([]uint64, []float64, error) {
 }
 
 // Reset sets all counters to zero.
-func (cs *Counters) Reset() error {
+func (cs *CounterGroup) Reset() error {
 	cs.leader.Disable()
 	defer cs.leader.Enable()
 
@@ -103,13 +107,13 @@ func (cs *Counters) Reset() error {
 }
 
 // NewCounters constructs a new Counter group.
-func NewCounters(opts ...Option) (*Counters, error) {
+func NewCounters(opts ...Option) (*CounterGroup, error) {
 	leader, err := NewCounter(opts[0])
 	if err != nil {
 		return nil, err
 	}
 
-	cs := &Counters{
+	cs := &CounterGroup{
 		leader: leader,
 		cs:     []*Counter{leader},
 	}
@@ -126,8 +130,18 @@ func NewCounters(opts ...Option) (*Counters, error) {
 	return cs, nil
 }
 
+// Disable the whole counter group simultaneously.
+func (cs *CounterGroup) Disable() error {
+	return cs.leader.Disable()
+}
+
+// Enable the whole counter group simultaneously.
+func (cs *CounterGroup) Enable() error {
+	return cs.leader.Enable()
+}
+
 // Close releases file descriptors and other resources associated with the Counters.
-func (cs *Counters) Close() error {
+func (cs *CounterGroup) Close() error {
 	var err error
 	err = cs.leader.Close()
 	for _, c := range cs.cs {
