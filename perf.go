@@ -302,6 +302,9 @@ func NewCounter(options ...Option) (*Counter, error) {
 
 	// log.Printf("Open %v", cfg.Name)
 	fd, err := perfEventOpen(&cfg.Attr, pid, cfg.CPU, cfg.GroupFD, cfg.Flags)
+	if os.IsNotExist(err) {
+		return nil, fmt.Errorf("no such counter %q", cfg.Name)
+	}
 	if err != nil {
 		return nil, err
 	}
