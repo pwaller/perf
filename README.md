@@ -1,3 +1,9 @@
+# Defunct
+
+These bindings are defunct. Please see acln0's great efforts, which hopefully will end up under the golang.org/x namespace one day:
+
+https://github.com/acln0/perf
+
 # Linux Perf Bindings for Go
 
 If you'd like to measure the (close to) exact number of CPU cycles and misses of a specific piece of Go code, you've come to the right place!
